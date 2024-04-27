@@ -1,0 +1,19 @@
+#container {
+  width: 100svw;
+  height: 100svh;
+  background-color: #181818;
+  color: #ddd;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#hello {
+  font-size: 5rem;
+}
