@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import "./TypingText.scss";
 
 interface TypingTextProps {
   staticText?: string;
-  typingText?: string;
+  typingText?: string[];
   skipWhitespace?: boolean;
   className?: string;
   id?: string;
@@ -16,6 +17,7 @@ export default function TypingText({
   id,
 }: TypingTextProps) {
   const [text, setText] = useState<string>("");
+  const currentTypingTextIndex = useRef<number>(0);
 
   useEffect(() => {
     if (!typingText) return;
@@ -30,10 +32,14 @@ export default function TypingText({
 
     let curr: number = 0;
     const interval = setInterval(() => {
-      if (skipWhitespace && !/\S/.test(typingText.charAt(curr))) curr++;
-      setText(typingText.substring(0, curr++));
+      if (
+        skipWhitespace &&
+        !/\S/.test(typingText[currentTypingTextIndex.current].charAt(curr))
+      )
+        curr++;
+      setText(typingText[currentTypingTextIndex.current].substring(0, curr++));
 
-      if (curr > typingText.length) {
+      if (curr > typingText[currentTypingTextIndex.current].length) {
         setTimeout(startErasing, 1000);
         clearInterval(interval);
       }
@@ -45,12 +51,22 @@ export default function TypingText({
   function startErasing() {
     if (!typingText) return;
 
-    let curr: number = typingText.length - 1;
+    let curr: number = typingText[currentTypingTextIndex.current].length - 1;
     const interval = setInterval(() => {
-      if (skipWhitespace && !/\S/.test(typingText.charAt(curr))) curr--;
-      setText(typingText.substring(0, curr--));
+      if (
+        skipWhitespace &&
+        !/\S/.test(typingText[currentTypingTextIndex.current].charAt(curr))
+      )
+        curr--;
+      setText(typingText[currentTypingTextIndex.current].substring(0, curr--));
 
       if (curr < 0) {
+        currentTypingTextIndex.current++;
+        if (currentTypingTextIndex.current >= typingText.length)
+          currentTypingTextIndex.current = 0;
+
+        console.log('1');
+        
         setTimeout(startTyping, 100);
         clearInterval(interval);
       }

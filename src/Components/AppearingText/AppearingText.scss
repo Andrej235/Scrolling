@@ -1,0 +1,12 @@
+.appearing-text {
+  font-size: 3rem;
+  text-align: center;
+  margin: 0;
+  width: 75%;
+  word-wrap: break-word;
+
+  span {
+    display: inline-block;
+    opacity: 0;
+  }
+}
