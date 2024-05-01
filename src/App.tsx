@@ -1,32 +1,37 @@
 import "./App.scss";
-import useTextAnimations from "./Hooks/UseTextAnimations";
+import ImageWithText from "./Components/ImageWithText/ImageWithText";
 
 function App() {
-  const a = useTextAnimations({
-    element: "#test",
-    animation: "jump",
-    yJump: -100,
-    stagger: 0.5,
-    // toggleActions: "play none none reverse",
-  });
+  /*   const split = useSplitText("#sine-text");
+  useGSAP(() => {
+    if (!split || !split.chars) return;
+
+    split.chars.forEach((char, i) => {
+      let frame = 0;
+      gsap.to(char, {
+        y: () =>
+          Math.sin((i / split.chars!.length) * Math.PI * 2) * 100 + frame,
+        onUpdate: () => {
+          frame += 1;
+        },
+      });
+    });
+  }, [split]); */
 
   return (
     <>
       <div className="text-container">Hi</div>
 
-      <div id="test" className="text-container" onClick={a}>
-        <p
-          style={{
-            margin: "2rem",
-          }}
-        >
-          Hello world! Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Eveniet laudantium molestias sequi vero quia assumenda eos cum,
-          pariatur inventore excepturi voluptatibus laboriosam praesentium sint
-          quisquam ut doloribus omnis hic tempore sequi provident deleniti
-          repudiandae facere! Laborum ratione eaque est delectus.
-        </p>
-      </div>
+      {/*       <div className="text-container" id="sine-text">
+        <p>Lorem, ipsum dolor.</p>
+      </div> */}
+
+      <ImageWithText
+        direction="Normal"
+        wrap="Reverse"
+        text="Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos optio explicabo placeat vitae voluptas alias."
+        imageUrl="https://picsum.photos/1920/1080"
+      />
     </>
   );
 }
