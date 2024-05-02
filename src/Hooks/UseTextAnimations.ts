@@ -19,6 +19,8 @@ interface AppearAnimationProps {
   animation: "appear";
   scrub?: boolean;
   markers?: boolean;
+  appearingType?: "characters" | "words" | "lines";
+  trigger?: `#${string}`;
   onComplete?: () => void;
   toggleActions?: `${ScrollTriggerToggleAction} ${ScrollTriggerToggleAction} ${ScrollTriggerToggleAction} ${ScrollTriggerToggleAction}`;
 }
@@ -29,15 +31,21 @@ interface JumpAnimationProps {
   yJump?: number;
 }
 
+interface NotAnimatedProps {
+  animation: "none";
+}
+
 type TextAnimationProps = {
-  element: `#${string}` | `.${string}`;
+  element: `#${string}`;
   stagger?: number;
   duration?: number;
-} & (AppearAnimationProps | JumpAnimationProps);
+} & (AppearAnimationProps | JumpAnimationProps | NotAnimatedProps);
 
 export default function useTextAnimations<T extends "appear" | "jump">(
   props: TextAnimationProps
 ): T extends "appear" ? undefined : () => void {
+  if (props.animation === "none") return undefined as any;
+
   const split = useSplitText(props.element);
   const { contextSafe } = useGSAP();
   const [isAnimated, setIsAnimated] = useState(false);
@@ -46,14 +54,18 @@ export default function useTextAnimations<T extends "appear" | "jump">(
     if (!split || props.animation !== "appear") return;
 
     const scrollTrigger = ScrollTrigger.create({
-      trigger: props.element,
+      trigger: props.trigger ?? props.element,
       start: "top 75%",
       end: "bottom 50%",
       toggleActions: props.toggleActions ?? "play none none none",
       scrub: props.scrub,
       markers: props.markers,
       animation: gsap.fromTo(
-        split.chars,
+        !props.appearingType || props.appearingType === "characters"
+          ? split.chars
+          : props.appearingType === "words"
+          ? split.words
+          : split.lines,
         {
           opacity: 0,
           y: 15,

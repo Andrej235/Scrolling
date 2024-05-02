@@ -1,5 +1,6 @@
 import "./App.scss";
 import ImageWithText from "./Components/ImageWithText/ImageWithText";
+import useJumpyText from "./Hooks/UseJumpyText";
 
 function App() {
   /*   const split = useSplitText("#sine-text");
@@ -18,9 +19,18 @@ function App() {
     });
   }, [split]); */
 
+  useJumpyText("#jumpy");
+
   return (
     <>
-      <div className="text-container">Hi</div>
+      <div className="text-container">
+        <p>Hi</p>
+        <br />
+        <p id="jumpy">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque,
+          aliquam.
+        </p>
+      </div>
 
       {/*       <div className="text-container" id="sine-text">
         <p>Lorem, ipsum dolor.</p>
@@ -31,6 +41,11 @@ function App() {
         wrap="Reverse"
         text="Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos optio explicabo placeat vitae voluptas alias."
         imageUrl="https://picsum.photos/1920/1080"
+        animated
+        id="test"
+        animationProps={{
+          textAppearingType: "words",
+        }}
       />
     </>
   );
