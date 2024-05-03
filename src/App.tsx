@@ -1,6 +1,8 @@
 import "./App.scss";
+import Carousel from "./Components/Carousel/Carousel";
 import ImageWithText from "./Components/ImageWithText/ImageWithText";
 import useJumpyText from "./Hooks/UseJumpyText";
+import useTextAnimations from "./Hooks/UseTextAnimations";
 
 function App() {
   /*   const split = useSplitText("#sine-text");
@@ -21,14 +23,29 @@ function App() {
 
   useJumpyText("#jumpy");
 
+  //TODO: Maybe automate this?
+  const titleJump = useTextAnimations({
+    element: "#title",
+    animation: "jump",
+  });
+
   return (
     <>
       <div className="text-container">
         <p>Hi</p>
+        <p id="title" onClick={titleJump}>
+          Timelines
+        </p>
         <br />
-        <p id="jumpy">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque,
-          aliquam.
+        <p
+          id="jumpy"
+          style={{
+            margin: "0 5vw",
+          }}
+        >
+          Just like we've just seen with staggers, It's common to animate more
+          than one thing. But what if we need more control over the order and
+          timing of those animations?
         </p>
       </div>
 
@@ -36,10 +53,43 @@ function App() {
         <p>Lorem, ipsum dolor.</p>
       </div> */}
 
+      <Carousel
+        flyIn={true}
+        animationProps={{
+          inDuration: 1,
+          outDuration: 0.5,
+          visibleDuration: 1,
+        }}
+      >
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        <p>Third paragraph</p>
+      </Carousel>
+
+      <Carousel flyIn={{ from: "left", to: "right", offset: 100 }}>
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        <p>Third paragraph</p>
+      </Carousel>
+
+      <Carousel
+        flyIn={{ from: "right", to: "left", inOffset: 200, outOffset: 300 }}
+        animationProps={{
+          inDuration: 0.5,
+          outDuration: 0.5,
+          visibleDuration: 1,
+        }}
+      >
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        <p>Third paragraph</p>
+      </Carousel>
+
       <ImageWithText
         direction="Normal"
         wrap="Reverse"
-        text="Lorem, ipsum dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos optio explicabo placeat vitae voluptas alias."
+        text="Timelines are the key to creating easily adjustable, resilient sequences of animations. When you add tweens to a timeline, by default they'll play one-after-another in the order they were added.
+"
         imageUrl="https://picsum.photos/1920/1080"
         animated
         id="test"
