@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useSplitText from "./UseSplitText";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -52,33 +52,30 @@ export default function useTextAnimations(props: TextAnimationProps): void {
   const jumpAnimation =
     props.animation !== "jump" || isAnimated || !split
       ? undefined
-      : useCallback(
-          contextSafe(() => {
-            setIsAnimated(true);
-            gsap.fromTo(
-              split.chars,
-              {
-                y: props.fromY ?? 0,
-              },
-              {
-                y: (props.fromY ?? 0) + (props.yJump ?? -15),
-                stagger: props.stagger ?? 0.05,
-                duration: props.duration ?? 0.175,
-                ease: "sine.inOut",
-              }
-            );
-
-            gsap.to(split.chars, {
+      : contextSafe(() => {
+          setIsAnimated(true);
+          gsap.fromTo(
+            split.chars,
+            {
               y: props.fromY ?? 0,
+            },
+            {
+              y: (props.fromY ?? 0) + (props.yJump ?? -15),
               stagger: props.stagger ?? 0.05,
               duration: props.duration ?? 0.175,
-              delay: (props.duration ?? 0.175) + (props.stagger ?? 0.05),
               ease: "sine.inOut",
-              onComplete: () => setIsAnimated(false),
-            });
-          }),
-          [isAnimated, split]
-        );
+            }
+          );
+
+          gsap.to(split.chars, {
+            y: props.fromY ?? 0,
+            stagger: props.stagger ?? 0.05,
+            duration: props.duration ?? 0.175,
+            delay: (props.duration ?? 0.175) + (props.stagger ?? 0.05),
+            ease: "sine.inOut",
+            onComplete: () => setIsAnimated(false),
+          });
+        });
 
   useEffect(() => {
     if (!split || props.animation !== "appear") return;

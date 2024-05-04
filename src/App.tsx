@@ -2,26 +2,12 @@ import "./App.scss";
 import Carousel from "./Components/Carousel/Carousel";
 import ImageWithText from "./Components/ImageWithText/ImageWithText";
 import useJumpyText from "./Hooks/UseJumpyText";
+import useScrambledText from "./Hooks/UseScrambledText";
 import useTextAnimations from "./Hooks/UseTextAnimations";
 
 function App() {
-  /*   const split = useSplitText("#sine-text");
-  useGSAP(() => {
-    if (!split || !split.chars) return;
-
-    split.chars.forEach((char, i) => {
-      let frame = 0;
-      gsap.to(char, {
-        y: () =>
-          Math.sin((i / split.chars!.length) * Math.PI * 2) * 100 + frame,
-        onUpdate: () => {
-          frame += 1;
-        },
-      });
-    });
-  }, [split]); */
-
   useJumpyText("#jumpy");
+  useScrambledText("#scrambled-text");
 
   useTextAnimations({
     element: "#title",
@@ -47,9 +33,18 @@ function App() {
         </p>
       </div>
 
-      {/*       <div className="text-container" id="sine-text">
-        <p>Lorem, ipsum dolor.</p>
-      </div> */}
+      <div className="text-container">
+        <p
+          id="scrambled-text"
+          style={{
+            margin: "0 5vw",
+          }}
+        >
+          By default GSAP will use px and degrees for transforms but you can use
+          other units like, vw, radians or even do your own JS calculations or
+          relative values!
+        </p>
+      </div>
 
       <Carousel
         flyIn={true}
@@ -86,11 +81,10 @@ function App() {
       <ImageWithText
         direction="Normal"
         wrap="Reverse"
-        text="Timelines are the key to creating easily adjustable, resilient sequences of animations. When you add tweens to a timeline, by default they'll play one-after-another in the order they were added.
-"
+        text="Timelines are the key to creating easily adjustable, resilient sequences of animations. When you add tweens to a timeline, by default they'll play one-after-another in the order they were added."
         imageUrl="https://picsum.photos/1920/1080"
         animated
-        id="test"
+        id="image-with-text"
         animationProps={{
           textAppearingType: "words",
         }}

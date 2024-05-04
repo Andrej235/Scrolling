@@ -8,6 +8,10 @@ interface AnimationProps {
   visibleDuration: number;
 }
 
+type ExclusiveOffset<T extends "single" | "separate"> = T extends "single"
+  ? { offset: gsap.TweenValue; inOffset?: never; outOffset?: never }
+  : { offset?: never; inOffset: gsap.TweenValue; outOffset: gsap.TweenValue };
+
 interface CarouselProps {
   children: JSX.Element[];
   animationProps?: Partial<AnimationProps>;
@@ -15,15 +19,7 @@ interface CarouselProps {
     | ({
         from?: "left" | "right" | "top" | "bottom";
         to?: "left" | "right" | "top" | "bottom";
-      } & (
-        | {
-            offset?: gsap.TweenValue;
-          }
-        | {
-            inOffset?: gsap.TweenValue;
-            outOffset?: gsap.TweenValue;
-          }
-      ))
+      } & (ExclusiveOffset<"single"> | ExclusiveOffset<"separate">))
     | true;
 }
 
@@ -43,15 +39,15 @@ export default function Carousel({
     if (!flyIn) return;
 
     const offset =
-      flyIn !== true && "inOffset" in flyIn
+      flyIn !== true && flyIn.inOffset
         ? ({
-            in: flyIn.inOffset ?? 100,
-            out: flyIn.outOffset ?? flyIn.inOffset ?? 100,
+            in: flyIn.inOffset,
+            out: flyIn.outOffset,
           } as const)
-        : flyIn !== true && "offset" in flyIn
+        : flyIn !== true && flyIn.offset
         ? ({
-            in: flyIn.offset ?? 100,
-            out: flyIn.offset ?? 100,
+            in: flyIn.offset,
+            out: flyIn.offset,
           } as const)
         : ({
             in: 100,
