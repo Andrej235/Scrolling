@@ -29,6 +29,7 @@ interface JumpAnimationProps {
   animation: "jump";
   fromY?: number;
   yJump?: number;
+  trigger?: keyof HTMLElementEventMap | keyof HTMLElementEventMap[];
 }
 
 interface NotAnimatedProps {
@@ -41,14 +42,43 @@ type TextAnimationProps = {
   duration?: number;
 } & (AppearAnimationProps | JumpAnimationProps | NotAnimatedProps);
 
-export default function useTextAnimations<T extends "appear" | "jump">(
-  props: TextAnimationProps
-): T extends "appear" ? undefined : () => void {
+export default function useTextAnimations(props: TextAnimationProps): void {
   if (props.animation === "none") return undefined as any;
 
   const split = useSplitText(props.element);
   const { contextSafe } = useGSAP();
   const [isAnimated, setIsAnimated] = useState(false);
+
+  const jumpAnimation =
+    props.animation !== "jump" || isAnimated || !split
+      ? undefined
+      : useCallback(
+          contextSafe(() => {
+            setIsAnimated(true);
+            gsap.fromTo(
+              split.chars,
+              {
+                y: props.fromY ?? 0,
+              },
+              {
+                y: (props.fromY ?? 0) + (props.yJump ?? -15),
+                stagger: props.stagger ?? 0.05,
+                duration: props.duration ?? 0.175,
+                ease: "sine.inOut",
+              }
+            );
+
+            gsap.to(split.chars, {
+              y: props.fromY ?? 0,
+              stagger: props.stagger ?? 0.05,
+              duration: props.duration ?? 0.175,
+              delay: (props.duration ?? 0.175) + (props.stagger ?? 0.05),
+              ease: "sine.inOut",
+              onComplete: () => setIsAnimated(false),
+            });
+          }),
+          [isAnimated, split]
+        );
 
   useEffect(() => {
     if (!split || props.animation !== "appear") return;
@@ -83,35 +113,35 @@ export default function useTextAnimations<T extends "appear" | "jump">(
     return () => scrollTrigger.kill();
   }, [split]);
 
-  if (props.animation !== "jump") return undefined as any;
+  useEffect(() => {
+    if (props.animation !== "jump" || !jumpAnimation) return;
 
-  return useCallback(
-    contextSafe(() => {
-      if (isAnimated || !split) return;
+    const element = document.querySelector<HTMLElement>(props.element);
+    if (!element) return;
 
-      setIsAnimated(true);
-      gsap.fromTo(
-        split.chars,
-        {
-          y: props.fromY ?? 0,
-        },
-        {
-          y: (props.fromY ?? 0) + (props.yJump ?? -15),
-          stagger: props.stagger ?? 0.05,
-          duration: props.duration ?? 0.175,
-          ease: "sine.inOut",
+    if (Array.isArray(props.trigger)) {
+      props.trigger.forEach((trigger) => {
+        element.addEventListener(trigger, jumpAnimation);
+      });
+
+      return () => {
+        if (Array.isArray(props.trigger)) {
+          props.trigger.forEach((trigger) => {
+            element.removeEventListener(trigger, jumpAnimation);
+          });
         }
+      };
+    } else {
+      element.addEventListener(
+        (props.trigger ?? "click").toString(),
+        jumpAnimation
       );
 
-      gsap.to(split.chars, {
-        y: props.fromY ?? 0,
-        stagger: props.stagger ?? 0.05,
-        duration: props.duration ?? 0.175,
-        delay: (props.duration ?? 0.175) + (props.stagger ?? 0.05),
-        ease: "sine.inOut",
-        onComplete: () => setIsAnimated(false),
-      });
-    }),
-    [isAnimated, split]
-  ) as any;
+      return () =>
+        element.removeEventListener(
+          (props.trigger ?? "click").toString(),
+          jumpAnimation
+        );
+    }
+  }, [jumpAnimation]);
 }

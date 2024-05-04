@@ -23,19 +23,17 @@ function App() {
 
   useJumpyText("#jumpy");
 
-  //TODO: Maybe automate this?
-  const titleJump = useTextAnimations({
+  useTextAnimations({
     element: "#title",
     animation: "jump",
+    trigger: "mouseover",
   });
 
   return (
     <>
       <div className="text-container">
         <p>Hi</p>
-        <p id="title" onClick={titleJump}>
-          Timelines
-        </p>
+        <p id="title">Timelines</p>
         <br />
         <p
           id="jumpy"
