@@ -13,6 +13,8 @@
   grid-auto-flow: column;
   place-items: center start;
 
+  user-select: none;
+
   .selection-indicator {
     grid-row: 1;
     grid-column: 1;
@@ -24,9 +26,29 @@
     grid-column-start: 1;
     grid-column-end: 3;
 
+    &::before {
+      content: "";
+      display: block;
+      width: 0;
+      height: 2px;
+      background-color: #fff;
+
+      transform: translate(0, 1.75rem);
+      transition: 175ms;
+      transition-timing-function: ease-in-out;
+    }
+
+    &:not(.selected):hover::before {
+      width: 60%;
+    }
+
     &.selected {
       font-weight: bold;
       grid-column: 2;
+
+      &::before {
+        width: 100%;
+      }
     }
   }
 }

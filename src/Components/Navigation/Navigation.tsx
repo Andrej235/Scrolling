@@ -7,25 +7,37 @@ gsap.registerPlugin(Flip);
 
 export default function Navigation() {
   const { contextSafe } = useGSAP();
+  const isAnimationActive = useRef(false);
   const selectedNavigationItemRef = useRef<number>(0);
   const navigationContainerRef = useRef<HTMLDivElement>(null);
+  const selectionIndicatorRef = useRef<HTMLDivElement>(null);
 
-  const playAnimation = contextSafe((i: number) => {
+  const playSelectAnimation = contextSafe((i: number) => {
     if (
+      isAnimationActive.current ||
       !navigationContainerRef.current ||
+      !selectionIndicatorRef.current ||
       selectedNavigationItemRef.current === i
     )
       return;
 
+    isAnimationActive.current = true;
+
     const oldSelectedNavigationItemsState = Flip.getState(
-      ".navigation-item.selected"
+      navigationContainerRef.current?.children[
+        selectedNavigationItemRef.current
+      ]
     );
+
     const newSelectedNavigationItemsState = Flip.getState(
       navigationContainerRef.current?.children[i]
     );
-    const selectionIndicatorState = Flip.getState(".selection-indicator");
 
-    gsap.set(".selection-indicator", {
+    const selectionIndicatorState = Flip.getState(
+      selectionIndicatorRef.current
+    );
+
+    gsap.set(selectionIndicatorRef.current, {
       gridRow: i + 1,
     });
 
@@ -34,9 +46,7 @@ export default function Navigation() {
     ].classList.remove("selected");
 
     navigationContainerRef.current?.children[i].classList.add("selected");
-    const timeline = Flip.from(oldSelectedNavigationItemsState, {
-      duration: 0.33,
-    });
+    const timeline = gsap.timeline();
 
     timeline.add(
       Flip.from(selectionIndicatorState, {
@@ -79,30 +89,60 @@ export default function Navigation() {
       "<"
     );
 
-    selectedNavigationItemRef.current = i;
+    timeline.add(
+      Flip.from(oldSelectedNavigationItemsState, {
+        duration: 0.33,
+      }),
+      "<-0.075"
+    );
+
+    timeline.eventCallback("onComplete", () => {
+      selectedNavigationItemRef.current = i;
+      isAnimationActive.current = false;
+
+      for (
+        let j = 0;
+        j < navigationContainerRef.current!.children.length;
+        j++
+      ) {
+        const child = navigationContainerRef.current!.children[j];
+        if (
+          child.classList.contains("selected") &&
+          j !== selectedNavigationItemRef.current
+        )
+          child.classList.remove("selected");
+      }
+
+      gsap.set(navigationContainerRef.current!.children, {
+        x: 0,
+      });
+    });
   });
+
+  function onSelect(i: number) {
+    playSelectAnimation(i);
+  }
 
   return (
     <div className="navigation" ref={navigationContainerRef}>
-      <div
-        onClick={() => playAnimation(0)}
-        className="navigation-item selected"
-      >
+      <div onClick={() => onSelect(0)} className="navigation-item selected">
         Home
       </div>
-      <div onClick={() => playAnimation(1)} className="navigation-item">
+      <div onClick={() => onSelect(1)} className="navigation-item">
         Projects
       </div>
-      <div onClick={() => playAnimation(2)} className="navigation-item">
+      <div onClick={() => onSelect(2)} className="navigation-item">
         Info
       </div>
-      <div onClick={() => playAnimation(3)} className="navigation-item">
+      <div onClick={() => onSelect(3)} className="navigation-item">
         Contact
       </div>
-      <div onClick={() => playAnimation(4)} className="navigation-item">
+      <div onClick={() => onSelect(4)} className="navigation-item">
         FAQ
       </div>
-      <div className="selection-indicator">●</div>
+      <div className="selection-indicator" ref={selectionIndicatorRef}>
+        ●
+      </div>
     </div>
   );
 }
