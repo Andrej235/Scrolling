@@ -1,6 +1,7 @@
 import "./App.scss";
 import Carousel from "./Components/Carousel/Carousel";
 import ImageWithText from "./Components/ImageWithText/ImageWithText";
+import Navigation from "./Components/Navigation/Navigation";
 import useJumpyText from "./Hooks/UseJumpyText";
 import useScrambledText from "./Hooks/UseScrambledText";
 import useTextAnimations from "./Hooks/UseTextAnimations";
@@ -17,6 +18,8 @@ function App() {
 
   return (
     <>
+      <Navigation />
+
       <div className="text-container">
         <p>Hi</p>
         <p id="title">Timelines</p>
