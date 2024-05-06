@@ -2,6 +2,7 @@ import "./App.scss";
 import Carousel from "./Components/Carousel/Carousel";
 import ImageWithText from "./Components/ImageWithText/ImageWithText";
 import Navigation from "./Components/Navigation/Navigation";
+import Track from "./Components/Track/Track";
 import useJumpyText from "./Hooks/UseJumpyText";
 import useScrambledText from "./Hooks/UseScrambledText";
 import useTextAnimations from "./Hooks/UseTextAnimations";
@@ -34,6 +35,24 @@ function App() {
           than one thing. But what if we need more control over the order and
           timing of those animations?
         </p>
+      </div>
+
+      <div
+        style={{
+          width: "50%",
+          border: "1px solid #fff",
+          position: "relative",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
+        <Track>
+          <p>First paragraph</p>
+          <p>Second paragraph</p>
+          <p>Third paragraph</p>
+          <p>Fourth paragraph</p>
+          <p>Fifth paragraph</p>
+        </Track>
       </div>
 
       <div className="text-container">
