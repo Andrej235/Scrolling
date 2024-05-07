@@ -11,15 +11,20 @@ interface TrackProps {
 export default function Track({ children }: TrackProps) {
   const hiddenTrackItemsQueue = useRef<Queue<Element>>(new Queue<Element>());
   const trackRef = useRef<HTMLDivElement>(null);
+  const trackRectRef = useRef<DOMRect>(new DOMRect());
 
   useEffect(() => {
     initialize();
+    showNext();
 
-    return () => {
-      console.log("cleaning up");
-      hiddenTrackItemsQueue.current = new Queue<Element>();
-    };
+    //No need to hide all elements since 'initialize' will hide them anyway
+    return () => hiddenTrackItemsQueue.current.clear();
   }, []);
+
+  function showNext() {
+    const firstInQueue = hiddenTrackItemsQueue.current.dequeue();
+    if (firstInQueue) showElement(firstInQueue);
+  }
 
   const { contextSafe } = useGSAP();
 
@@ -27,73 +32,73 @@ export default function Track({ children }: TrackProps) {
     if (!trackRef.current) return;
 
     const trackRect = trackRef.current.getBoundingClientRect();
+    trackRectRef.current = trackRect;
+
     const children = trackRef.current.children[0].children;
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
       const childRect = child.getBoundingClientRect();
-      (child as HTMLElement).dataset.originalLeft = childRect.left.toString();
-
       const childRelativeLeft = trackRect.left - childRect.left;
 
-      // const currentX = -(2 * rect.width - positionX - childRelativeLeft);
       const currentX = childRelativeLeft - childRect.width;
       gsap.set(child, {
         left: currentX,
       });
+
+      (child as HTMLElement).dataset.originalLeft = childRect.left.toString();
+      (child as HTMLElement).dataset.hiddenLeft = currentX.toString();
+      (child as HTMLElement).dataset.width = childRect.width.toString();
 
       hiddenTrackItemsQueue.current.enqueue(child);
     }
   });
 
   const hideElement = contextSafe((element: Element) => {
-    if (!trackRef.current) return;
-
     gsap.set(element, {
-      left: 0,
-    });
-
-    const trackRect = trackRef.current?.getBoundingClientRect();
-    const childRect = element.getBoundingClientRect();
-    const currentX = trackRect.left - childRect.left - childRect.width;
-
-    gsap.set(element, {
-      left: currentX,
+      left: parseFloat((element as HTMLElement).dataset.hiddenLeft!),
     });
 
     hiddenTrackItemsQueue.current.enqueue(element);
   });
 
   const showElement = contextSafe((element: Element) => {
-    if (!trackRef.current) return;
+    if (!trackRectRef.current) return;
 
-    const trackRect = trackRef.current?.getBoundingClientRect();
-    const currentX =
-      trackRect.left -
-      parseInt((element as HTMLElement).dataset.originalLeft ?? "0") +
-      trackRect.width;
+    //TODO: replace with a prop
+    const distanceBetweenElements = 70;
 
-    const tl = gsap.timeline();
-    tl.to(element, {
-      left: currentX,
-      duration: 1,
+    const trackRect = trackRectRef.current;
+    const visibleX =
+      trackRect.left - parseInt((element as HTMLElement).dataset.originalLeft!);
+
+    const absoluteVisibleX = parseInt((element as HTMLElement).dataset.width!);
+    const absoluteVisibleXPercent =
+      (absoluteVisibleX + distanceBetweenElements) /
+      (trackRect.width + absoluteVisibleX);
+
+    const timeline = gsap.timeline();
+    const totalDuration = 2.5;
+
+    timeline.to(element, {
+      left: visibleX + distanceBetweenElements,
+      duration: totalDuration * absoluteVisibleXPercent,
+      ease: "none",
+      onComplete: showNext,
+    });
+
+    timeline.to(element, {
+      left: visibleX + trackRect.width,
+      duration: totalDuration * (1 - absoluteVisibleXPercent),
       ease: "none",
       onComplete: () => {
-        tl.clear();
         hideElement(element);
       },
     });
   });
 
-  function start() {
-    const firstInQueue = hiddenTrackItemsQueue.current.dequeue();
-    if (!firstInQueue) return;
-
-    showElement(firstInQueue);
-  }
-
   return (
-    <div className="track" ref={trackRef} onClick={start}>
+    <div className="track" ref={trackRef}>
       <div>{children}</div>
     </div>
   );

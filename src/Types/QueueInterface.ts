@@ -5,4 +5,6 @@ export interface Queue<T> {
   reverse(): void;
   size(): number;
   isEmpty(): boolean;
+  clear(): void;
+  toArray(): T[];
 }
