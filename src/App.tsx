@@ -47,9 +47,30 @@ function App() {
           transform: "translateX(-50%)",
           boxSizing: "border-box",
           padding: "1rem 0",
+          marginBottom: "50vh",
         }}
       >
-        <Track>
+        <Track distanceBetweenElements={75} totalDuration={2.5}>
+          <p>First paragraph</p>
+          <p>Second paragraph</p>
+          <p>Third paragraph</p>
+          <p>Fourth paragraph</p>
+          <p>Fifth paragraph</p>
+        </Track>
+      </div>
+
+      <div
+        style={{
+          width: "50%",
+          border: "1px solid #fff",
+          position: "relative",
+          left: "50%",
+          transform: "translateX(-50%)",
+          boxSizing: "border-box",
+          padding: "1rem 0",
+        }}
+      >
+        <Track distanceBetweenElements={75} totalDuration={2.5}>
           <Icon className="icon-bottom-track" name="link" />
           <Icon className="icon-bottom-track" name="thumbs-up" />
           <Icon className="icon-bottom-track" name="arrow-circle-left" />
@@ -66,7 +87,7 @@ function App() {
 
         <br />
 
-        <Track>
+        <Track distanceBetweenElements={75} totalDuration={2.5}>
           <p>First paragraph</p>
           <p>Second paragraph</p>
           <p>Third paragraph</p>
@@ -76,7 +97,7 @@ function App() {
 
         <br />
 
-        <Track>
+        <Track distanceBetweenElements={75} totalDuration={2.5}>
           <Icon className="icon-bottom-track" name="address-card" />
           <Icon className="icon-bottom-track" name="apple" />
           <Icon className="icon-bottom-track" name="arrows-alt" />

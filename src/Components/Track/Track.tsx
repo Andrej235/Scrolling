@@ -6,10 +6,27 @@ import { Queue } from "../../Types/Queue";
 
 interface TrackProps {
   children: JSX.Element[] | JSX.Element;
+  distanceBetweenElements: number;
+  totalDuration: number;
 }
 
-export default function Track({ children }: TrackProps) {
-  const hiddenTrackItemsQueue = useRef<Queue<Element>>(new Queue<Element>());
+type PrecalculatedElement = {
+  element: Element;
+  leftOuterEdge: number;
+  leftInnerEdge: number;
+  rightOuterEdge: number;
+  rightInnerEdge: number;
+  width: number;
+};
+
+export default function Track({
+  children,
+  distanceBetweenElements,
+  totalDuration,
+}: TrackProps) {
+  const hiddenTrackItemsQueue = useRef<Queue<PrecalculatedElement>>(
+    new Queue<PrecalculatedElement>()
+  );
   const trackRef = useRef<HTMLDivElement>(null);
   const trackRectRef = useRef<DOMRect>(new DOMRect());
 
@@ -41,55 +58,47 @@ export default function Track({ children }: TrackProps) {
       const childRect = child.getBoundingClientRect();
       const childRelativeLeft = trackRect.left - childRect.left;
 
-      const currentX = childRelativeLeft - childRect.width;
-      gsap.set(child, {
-        left: currentX,
+      hideElement({
+        element: child,
+        leftOuterEdge: childRelativeLeft - childRect.width,
+        leftInnerEdge: childRelativeLeft,
+        rightOuterEdge: childRelativeLeft + trackRect.width,
+        rightInnerEdge: childRelativeLeft + trackRect.width - childRect.width,
+        width: childRect.width,
       });
-
-      (child as HTMLElement).dataset.originalLeft = childRect.left.toString();
-      (child as HTMLElement).dataset.hiddenLeft = currentX.toString();
-      (child as HTMLElement).dataset.width = childRect.width.toString();
-
-      hiddenTrackItemsQueue.current.enqueue(child);
     }
   });
 
-  const hideElement = contextSafe((element: Element) => {
-    gsap.set(element, {
-      left: parseFloat((element as HTMLElement).dataset.hiddenLeft!),
+  const hideElement = contextSafe((element: PrecalculatedElement) => {
+    gsap.set(element.element, {
+      left: element.leftOuterEdge,
     });
 
     hiddenTrackItemsQueue.current.enqueue(element);
   });
 
-  const showElement = contextSafe((element: Element) => {
+  const showElement = contextSafe((element: PrecalculatedElement) => {
     if (!trackRectRef.current) return;
 
-    //TODO: replace with a prop
-    const distanceBetweenElements = 70;
-
     const trackRect = trackRectRef.current;
-    const visibleX =
-      trackRect.left - parseInt((element as HTMLElement).dataset.originalLeft!);
+    const visibleX = element.leftInnerEdge;
 
-    const absoluteVisibleX = parseInt((element as HTMLElement).dataset.width!);
-    const absoluteVisibleXPercent =
-      (absoluteVisibleX + distanceBetweenElements) /
-      (trackRect.width + absoluteVisibleX);
+    const absoluteTravelDistancePercent =
+      (element.width + distanceBetweenElements) /
+      (trackRect.width + element.width);
 
     const timeline = gsap.timeline();
-    const totalDuration = 2.5;
 
-    timeline.to(element, {
+    timeline.to(element.element, {
       left: visibleX + distanceBetweenElements,
-      duration: totalDuration * absoluteVisibleXPercent,
+      duration: totalDuration * absoluteTravelDistancePercent,
       ease: "none",
       onComplete: showNext,
     });
 
-    timeline.to(element, {
+    timeline.to(element.element, {
       left: visibleX + trackRect.width,
-      duration: totalDuration * (1 - absoluteVisibleXPercent),
+      duration: totalDuration * (1 - absoluteTravelDistancePercent),
       ease: "none",
       onComplete: () => {
         hideElement(element);
