@@ -21,7 +21,6 @@ function App() {
   return (
     <>
       <Navigation />
-
       <div className="text-container">
         <p>Hi</p>
         <p id="title">Timelines</p>
@@ -37,7 +36,6 @@ function App() {
           timing of those animations?
         </p>
       </div>
-
       <div
         style={{
           width: "50%",
@@ -47,10 +45,13 @@ function App() {
           transform: "translateX(-50%)",
           boxSizing: "border-box",
           padding: "1rem 0",
-          marginBottom: "50vh",
         }}
       >
-        <Track distanceBetweenElements={75} totalDuration={2.5}>
+        <Track
+          distanceBetweenElements={175}
+          totalDuration={1}
+          direction="Right"
+        >
           <p>First paragraph</p>
           <p>Second paragraph</p>
           <p>Third paragraph</p>
@@ -58,7 +59,124 @@ function App() {
           <p>Fifth paragraph</p>
         </Track>
       </div>
+      <div
+        style={{
+          width: "50%",
+          border: "1px solid #fff",
+          position: "relative",
+          left: "50%",
+          transform: "translateX(-50%)",
+          boxSizing: "border-box",
+          padding: "1rem 0",
+        }}
+      >
+        <Track distanceBetweenElements={125} totalDuration={2}>
+          <Icon className="icon-bottom-track" name="link" />
+          <Icon className="icon-bottom-track" name="thumbs-up" />
+          <Icon className="icon-bottom-track" name="arrow-circle-left" />
+          <Icon className="icon-bottom-track" name="code" />
+          <Icon className="icon-bottom-track" name="youtube-square" />
+          <Icon className="icon-bottom-track" name="thumbs-o-up" />
+          <Icon className="icon-bottom-track" name="align-left" />
+          <Icon className="icon-bottom-track" name="address-book" />
+          <Icon className="icon-bottom-track" name="volume-control-phone" />
+          <Icon className="icon-bottom-track" name="phone" />
+          <Icon className="icon-bottom-track" name="taxi" />
+          <Icon className="icon-bottom-track" name="bank" />
+        </Track>
 
+        <br />
+
+        <Track distanceBetweenElements={75} totalDuration={2.5}>
+          <p>First paragraph</p>
+          <p>Second paragraph</p>
+          <p>Third paragraph</p>
+          <p>Fourth paragraph</p>
+          <p>Fifth paragraph</p>
+        </Track>
+
+        <br />
+
+        <Track distanceBetweenElements={200} totalDuration={3}>
+          <Icon className="icon-bottom-track" name="address-card" />
+          <Icon className="icon-bottom-track" name="apple" />
+          <Icon className="icon-bottom-track" name="arrows-alt" />
+          <Icon className="icon-bottom-track" name="bell" />
+          <Icon className="icon-bottom-track" name="birthday-cake" />
+          <Icon className="icon-bottom-track" name="book" />
+          <Icon className="icon-bottom-track" name="calendar" />
+          <Icon className="icon-bottom-track" name="camera" />
+          <Icon className="icon-bottom-track" name="car" />
+          <Icon className="icon-bottom-track" name="coffee" />
+          <Icon className="icon-bottom-track" name="cog" />
+          <Icon className="icon-bottom-track" name="envelope" />
+        </Track>
+      </div>
+      <div
+        style={{
+          width: "50%",
+          border: "1px solid #fff",
+          position: "relative",
+          left: "50%",
+          transform: "translateX(-50%)",
+          boxSizing: "border-box",
+          padding: "1rem 0",
+        }}
+      >
+        <Track
+          distanceBetweenElements={75}
+          totalDuration={0.5}
+          direction="Right"
+        >
+          <Icon className="icon-bottom-track" name="link" />
+          <Icon className="icon-bottom-track" name="thumbs-up" />
+          <Icon className="icon-bottom-track" name="arrow-circle-left" />
+          <Icon className="icon-bottom-track" name="code" />
+          <Icon className="icon-bottom-track" name="youtube-square" />
+          <Icon className="icon-bottom-track" name="thumbs-o-up" />
+          <Icon className="icon-bottom-track" name="align-left" />
+          <Icon className="icon-bottom-track" name="address-book" />
+          <Icon className="icon-bottom-track" name="volume-control-phone" />
+          <Icon className="icon-bottom-track" name="phone" />
+          <Icon className="icon-bottom-track" name="taxi" />
+          <Icon className="icon-bottom-track" name="bank" />
+        </Track>
+
+        <br />
+
+        <Track
+          distanceBetweenElements={75}
+          totalDuration={2.5}
+          direction="Right"
+        >
+          <p>First paragraph</p>
+          <p>Second paragraph</p>
+          <p>Third paragraph</p>
+          <p>Fourth paragraph</p>
+          <p>Fifth paragraph</p>
+        </Track>
+
+        <br />
+
+        <Track
+          distanceBetweenElements={75}
+          totalDuration={0.5}
+          direction="Left"
+        >
+          <Icon className="icon-bottom-track" name="address-card" />
+          <Icon className="icon-bottom-track" name="apple" />
+          <Icon className="icon-bottom-track" name="arrows-alt" />
+          <Icon className="icon-bottom-track" name="bell" />
+          <Icon className="icon-bottom-track" name="birthday-cake" />
+          <Icon className="icon-bottom-track" name="book" />
+          <Icon className="icon-bottom-track" name="calendar" />
+          <Icon className="icon-bottom-track" name="camera" />
+          <Icon className="icon-bottom-track" name="car" />
+          <Icon className="icon-bottom-track" name="coffee" />
+          <Icon className="icon-bottom-track" name="cog" />
+          <Icon className="icon-bottom-track" name="envelope" />
+        </Track>
+      </div>{" "}
       <div
         style={{
           width: "50%",
@@ -87,7 +205,11 @@ function App() {
 
         <br />
 
-        <Track distanceBetweenElements={75} totalDuration={2.5}>
+        <Track
+          distanceBetweenElements={75}
+          totalDuration={2.5}
+          direction="Right"
+        >
           <p>First paragraph</p>
           <p>Second paragraph</p>
           <p>Third paragraph</p>
@@ -97,7 +219,11 @@ function App() {
 
         <br />
 
-        <Track distanceBetweenElements={75} totalDuration={2.5}>
+        <Track
+          distanceBetweenElements={75}
+          totalDuration={2.5}
+          direction="Right"
+        >
           <Icon className="icon-bottom-track" name="address-card" />
           <Icon className="icon-bottom-track" name="apple" />
           <Icon className="icon-bottom-track" name="arrows-alt" />
@@ -112,7 +238,118 @@ function App() {
           <Icon className="icon-bottom-track" name="envelope" />
         </Track>
       </div>
+      <div
+        style={{
+          width: "50%",
+          border: "1px solid #fff",
+          position: "relative",
+          left: "50%",
+          transform: "translateX(-50%)",
+          boxSizing: "border-box",
+          padding: "1rem 0",
+        }}
+      >
+        <Track distanceBetweenElements={75} totalDuration={2.5}>
+          <Icon className="icon-bottom-track" name="link" />
+          <Icon className="icon-bottom-track" name="thumbs-up" />
+          <Icon className="icon-bottom-track" name="arrow-circle-left" />
+          <Icon className="icon-bottom-track" name="code" />
+          <Icon className="icon-bottom-track" name="youtube-square" />
+          <Icon className="icon-bottom-track" name="thumbs-o-up" />
+          <Icon className="icon-bottom-track" name="align-left" />
+          <Icon className="icon-bottom-track" name="address-book" />
+          <Icon className="icon-bottom-track" name="volume-control-phone" />
+          <Icon className="icon-bottom-track" name="phone" />
+          <Icon className="icon-bottom-track" name="taxi" />
+          <Icon className="icon-bottom-track" name="bank" />
+        </Track>
 
+        <br />
+
+        <Track distanceBetweenElements={75} totalDuration={0.1}>
+          <p>First paragraph</p>
+          <p>Second paragraph</p>
+          <p>Third paragraph</p>
+          <p>Fourth paragraph</p>
+          <p>Fifth paragraph</p>
+          <p>Sixth paragraph</p>
+          <p>Seventh paragraph</p>
+          <p>Eighth paragraph</p>
+          <p>Ninth paragraph</p>
+          <p>Tenth paragraph</p>
+        </Track>
+
+        <br />
+
+        <Track
+          distanceBetweenElements={75}
+          totalDuration={2.5}
+          direction="Right"
+        >
+          <Icon className="icon-bottom-track" name="address-card" />
+          <Icon className="icon-bottom-track" name="apple" />
+          <Icon className="icon-bottom-track" name="arrows-alt" />
+          <Icon className="icon-bottom-track" name="bell" />
+          <Icon className="icon-bottom-track" name="birthday-cake" />
+          <Icon className="icon-bottom-track" name="book" />
+          <Icon className="icon-bottom-track" name="calendar" />
+          <Icon className="icon-bottom-track" name="camera" />
+          <Icon className="icon-bottom-track" name="car" />
+          <Icon className="icon-bottom-track" name="coffee" />
+          <Icon className="icon-bottom-track" name="cog" />
+          <Icon className="icon-bottom-track" name="envelope" />
+        </Track>
+      </div>
+      <div
+        style={{
+          width: "50%",
+          border: "1px solid #fff",
+          position: "relative",
+          left: "50%",
+          transform: "translateX(-50%)",
+          boxSizing: "border-box",
+          padding: "1rem 0",
+        }}
+      >
+        <Track distanceBetweenElements={5} totalDuration={0.15}>
+          <Icon className="icon-bottom-track" name="link" />
+          <Icon className="icon-bottom-track" name="thumbs-up" />
+          <Icon className="icon-bottom-track" name="arrow-circle-left" />
+          <Icon className="icon-bottom-track" name="code" />
+          <Icon className="icon-bottom-track" name="youtube-square" />
+          <Icon className="icon-bottom-track" name="thumbs-o-up" />
+          <Icon className="icon-bottom-track" name="align-left" />
+          <Icon className="icon-bottom-track" name="address-book" />
+          <Icon className="icon-bottom-track" name="volume-control-phone" />
+          <Icon className="icon-bottom-track" name="phone" />
+          <Icon className="icon-bottom-track" name="taxi" />
+          <Icon className="icon-bottom-track" name="bank" />
+          <Icon className="icon-bottom-track" name="link" />
+          <Icon className="icon-bottom-track" name="thumbs-up" />
+          <Icon className="icon-bottom-track" name="arrow-circle-left" />
+          <Icon className="icon-bottom-track" name="code" />
+          <Icon className="icon-bottom-track" name="youtube-square" />
+          <Icon className="icon-bottom-track" name="thumbs-o-up" />
+          <Icon className="icon-bottom-track" name="align-left" />
+          <Icon className="icon-bottom-track" name="address-book" />
+          <Icon className="icon-bottom-track" name="volume-control-phone" />
+          <Icon className="icon-bottom-track" name="phone" />
+          <Icon className="icon-bottom-track" name="taxi" />
+          <Icon className="icon-bottom-track" name="bank" />
+          <Icon className="icon-bottom-track" name="link" />
+          <Icon className="icon-bottom-track" name="thumbs-up" />
+          <Icon className="icon-bottom-track" name="arrow-circle-left" />
+          <Icon className="icon-bottom-track" name="code" />
+          <Icon className="icon-bottom-track" name="youtube-square" />
+          <Icon className="icon-bottom-track" name="thumbs-o-up" />
+          <Icon className="icon-bottom-track" name="align-left" />
+          <Icon className="icon-bottom-track" name="address-book" />
+          <Icon className="icon-bottom-track" name="volume-control-phone" />
+          <Icon className="icon-bottom-track" name="phone" />
+          <Icon className="icon-bottom-track" name="taxi" />
+          <Icon className="icon-bottom-track" name="bank" />
+        </Track>
+      </div>
       <div className="text-container">
         <p
           id="scrambled-text"
@@ -125,7 +362,6 @@ function App() {
           relative values!
         </p>
       </div>
-
       <Carousel
         flyIn={true}
         animationProps={{
@@ -138,13 +374,11 @@ function App() {
         <p>Second paragraph</p>
         <p>Third paragraph</p>
       </Carousel>
-
       <Carousel flyIn={{ from: "left", to: "right", offset: 100 }}>
         <p>First paragraph</p>
         <p>Second paragraph</p>
         <p>Third paragraph</p>
       </Carousel>
-
       <Carousel
         flyIn={{ from: "right", to: "left", inOffset: 200, outOffset: 300 }}
         animationProps={{
@@ -157,7 +391,6 @@ function App() {
         <p>Second paragraph</p>
         <p>Third paragraph</p>
       </Carousel>
-
       <ImageWithText
         direction="Normal"
         wrap="Reverse"

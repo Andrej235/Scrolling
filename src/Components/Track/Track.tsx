@@ -8,14 +8,14 @@ interface TrackProps {
   children: JSX.Element[] | JSX.Element;
   distanceBetweenElements: number;
   totalDuration: number;
+  direction?: "Left" | "Right";
 }
 
 type PrecalculatedElement = {
   element: Element;
-  leftOuterEdge: number;
-  leftInnerEdge: number;
-  rightOuterEdge: number;
-  rightInnerEdge: number;
+  start: number;
+  startVisible: number;
+  finish: number;
   width: number;
 };
 
@@ -23,6 +23,7 @@ export default function Track({
   children,
   distanceBetweenElements,
   totalDuration,
+  direction,
 }: TrackProps) {
   const hiddenTrackItemsQueue = useRef<Queue<PrecalculatedElement>>(
     new Queue<PrecalculatedElement>()
@@ -52,18 +53,23 @@ export default function Track({
     trackRectRef.current = trackRect;
 
     const children = trackRef.current.children[0].children;
+    const isLeft = !direction || direction === "Left";
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
       const childRect = child.getBoundingClientRect();
       const childRelativeLeft = trackRect.left - childRect.left;
 
+      const leftOuterEdge = childRelativeLeft - childRect.width;
+      const leftInnerEdge = childRelativeLeft;
+      const rightOuterEdge = childRelativeLeft + trackRect.width;
+      const rightInnerEdge = rightOuterEdge - childRect.width;
+
       hideElement({
         element: child,
-        leftOuterEdge: childRelativeLeft - childRect.width,
-        leftInnerEdge: childRelativeLeft,
-        rightOuterEdge: childRelativeLeft + trackRect.width,
-        rightInnerEdge: childRelativeLeft + trackRect.width - childRect.width,
+        start: isLeft ? leftOuterEdge : rightOuterEdge,
+        startVisible: isLeft ? leftInnerEdge : rightInnerEdge,
+        finish: isLeft ? rightOuterEdge : leftOuterEdge,
         width: childRect.width,
       });
     }
@@ -71,7 +77,7 @@ export default function Track({
 
   const hideElement = contextSafe((element: PrecalculatedElement) => {
     gsap.set(element.element, {
-      left: element.leftOuterEdge,
+      left: element.start,
     });
 
     hiddenTrackItemsQueue.current.enqueue(element);
@@ -80,24 +86,25 @@ export default function Track({
   const showElement = contextSafe((element: PrecalculatedElement) => {
     if (!trackRectRef.current) return;
 
-    const trackRect = trackRectRef.current;
-    const visibleX = element.leftInnerEdge;
-
     const absoluteTravelDistancePercent =
       (element.width + distanceBetweenElements) /
-      (trackRect.width + element.width);
+      (trackRectRef.current.width + element.width);
 
     const timeline = gsap.timeline();
 
     timeline.to(element.element, {
-      left: visibleX + distanceBetweenElements,
+      left:
+        element.startVisible +
+        (!direction || direction == "Left"
+          ? distanceBetweenElements
+          : -distanceBetweenElements),
       duration: totalDuration * absoluteTravelDistancePercent,
       ease: "none",
       onComplete: showNext,
     });
 
     timeline.to(element.element, {
-      left: visibleX + trackRect.width,
+      left: element.finish,
       duration: totalDuration * (1 - absoluteTravelDistancePercent),
       ease: "none",
       onComplete: () => {
