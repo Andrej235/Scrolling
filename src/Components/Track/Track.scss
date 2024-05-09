@@ -1,23 +1,37 @@
 .track {
-  min-width: 100%;
-  max-width: 100%;
-  height: max-content;
-
   position: relative;
-  left: 0;
-  transform: translate(0, 0);
-  overflow-x: hidden;
+  overflow: hidden;
 
   div {
-    height: 100%;
     width: max-content;
     min-width: 100%;
+    height: max-content;
+    min-height: 100%;
 
     * {
       margin: 0;
       position: relative;
-      display: inline;
       width: fit-content;
     }
+  }
+}
+
+.vertical-track {
+  min-height: 100%;
+  max-height: 100%;
+  width: max-content;
+
+  div * {
+    display: block;
+  }
+}
+
+.horizontal-track {
+  min-width: 100%;
+  max-width: 100%;
+  height: max-content;
+
+  div * {
+    display: inline;
   }
 }

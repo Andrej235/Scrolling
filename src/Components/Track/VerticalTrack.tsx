@@ -8,7 +8,7 @@ interface TrackProps {
   children: JSX.Element[] | JSX.Element;
   distanceBetweenElements: number;
   totalDuration: number;
-  direction?: "Left" | "Right";
+  direction?: "Up" | "Down";
 }
 
 type PrecalculatedElement = {
@@ -16,10 +16,10 @@ type PrecalculatedElement = {
   start: number;
   startVisible: number;
   finish: number;
-  width: number;
+  height: number;
 };
 
-export default function Track({
+export default function VerticalTrack({
   children,
   distanceBetweenElements,
   totalDuration,
@@ -35,6 +35,7 @@ export default function Track({
   );
 
   useEffect(() => {
+    console.log("Render");
     initialize();
     showNext();
 
@@ -53,37 +54,39 @@ export default function Track({
   const { contextSafe } = useGSAP();
 
   const initialize = contextSafe(() => {
+    console.log("Initialize");
     if (!trackRef.current) return;
 
     const trackRect = trackRef.current.getBoundingClientRect();
     trackRectRef.current = trackRect;
 
     const children = trackRef.current.children[0].children;
-    const isLeft = direction && direction === "Left";
+    const isUp = direction && direction === "Up";
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
       const childRect = child.getBoundingClientRect();
-      const childRelativeLeft = trackRect.left - childRect.left;
+      const childRelativeTop = trackRect.top - childRect.top;
 
-      const leftOuterEdge = childRelativeLeft - childRect.width;
-      const leftInnerEdge = childRelativeLeft;
-      const rightOuterEdge = childRelativeLeft + trackRect.width;
-      const rightInnerEdge = rightOuterEdge - childRect.width;
+      const topOuterEdge = childRelativeTop - childRect.height;
+      const topInnerEdge = childRelativeTop;
+      const bottomOuterEdge = childRelativeTop + trackRect.height;
+      const bottomInnerEdge = bottomOuterEdge - childRect.height;
 
-      hideElement({
+      const current: PrecalculatedElement = {
         element: child,
-        start: isLeft ? leftOuterEdge : rightOuterEdge,
-        startVisible: isLeft ? leftInnerEdge : rightInnerEdge,
-        finish: isLeft ? rightOuterEdge : leftOuterEdge,
-        width: childRect.width,
-      });
+        start: isUp ? bottomOuterEdge : topOuterEdge,
+        startVisible: isUp ? bottomInnerEdge : topInnerEdge,
+        finish: isUp ? topOuterEdge : bottomOuterEdge,
+        height: childRect.height,
+      };
+      hideElement(current);
     }
   });
 
   const hideElement = contextSafe((element: PrecalculatedElement) => {
     gsap.set(element.element, {
-      left: element.start,
+      top: element.start,
     });
 
     visibleElementTimelines.current.dequeue();
@@ -93,9 +96,10 @@ export default function Track({
   const showElement = contextSafe((element: PrecalculatedElement) => {
     if (!trackRectRef.current) return;
 
-    const absoluteTravelDistancePercent =
-      (element.width + distanceBetweenElements) /
-      (trackRectRef.current.width + element.width);
+    const absoluteTravelDistancePercent = 0.07;
+    //   (element.height + distanceBetweenElements) /
+    //   (trackRectRef.current.height + element.height);
+    // console.log(absoluteTravelDistancePercent);
 
     const timeline = gsap.timeline();
 
@@ -103,9 +107,9 @@ export default function Track({
     visibleElementTimelines.current.enqueue(timeline);
 
     timeline.to(element.element, {
-      left:
+      top:
         element.startVisible +
-        (direction && direction == "Left"
+        (direction && direction == "Up"
           ? distanceBetweenElements
           : -distanceBetweenElements),
       duration: totalDuration * absoluteTravelDistancePercent,
@@ -114,7 +118,7 @@ export default function Track({
     });
 
     timeline.to(element.element, {
-      left: element.finish,
+      top: element.finish,
       duration: totalDuration * (1 - absoluteTravelDistancePercent),
       ease: "none",
       onComplete: () => {
@@ -125,7 +129,7 @@ export default function Track({
 
   return (
     <div
-      className="horizontal-track track"
+      className="vertical-track track"
       ref={trackRef}
       onMouseOver={() =>
         visibleElementTimelines.current.toArray().forEach((tl) => tl.pause())
