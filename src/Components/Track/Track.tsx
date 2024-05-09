@@ -4,27 +4,51 @@ import "./Track.scss";
 import { useGSAP } from "@gsap/react";
 import { Queue } from "../../Types/Queue";
 
-interface TrackProps {
+interface UniversalTrackProps {
   children: JSX.Element[] | JSX.Element;
   distanceBetweenElements: number;
   totalDuration: number;
-  direction?: "Left" | "Right";
+  isPaused?: boolean;
+  pauseStateToggleTriggers?: ("Mouse over" | "Scroll /// Not implemented")[];
 }
+
+type TrackProps = UniversalTrackProps &
+  (
+    | {
+        type: "vertical";
+        direction?: "Up" | "Down";
+      }
+    | {
+        type: "horizontal";
+        direction?: "Left" | "Right";
+      }
+    | {
+        type?: never;
+        direction?: "Left" | "Right";
+      }
+  );
 
 type PrecalculatedElement = {
   element: Element;
   start: number;
   startVisible: number;
   finish: number;
-  width: number;
+  relevantSize: number;
 };
 
 export default function Track({
   children,
   distanceBetweenElements,
   totalDuration,
-  direction,
+  isPaused,
+  pauseStateToggleTriggers,
+  ...typeProps
 }: TrackProps) {
+  useEffect(() => {
+    if (isPaused) pause();
+    else resume();
+  }, [isPaused]);
+
   const hiddenTrackItemsQueue = useRef<Queue<PrecalculatedElement>>(
     new Queue<PrecalculatedElement>()
   );
@@ -33,6 +57,7 @@ export default function Track({
   const visibleElementTimelines = useRef<Queue<gsap.core.Timeline>>(
     new Queue<gsap.core.Timeline>()
   );
+  const isDirectionNegative = useRef<boolean>(false);
 
   useEffect(() => {
     initialize();
@@ -59,31 +84,61 @@ export default function Track({
     trackRectRef.current = trackRect;
 
     const children = trackRef.current.children[0].children;
-    const isLeft = direction && direction === "Left";
 
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      const childRect = child.getBoundingClientRect();
-      const childRelativeLeft = trackRect.left - childRect.left;
+    if (!typeProps.type || typeProps.type == "horizontal") {
+      const isLeft = typeProps.direction && typeProps.direction === "Left";
 
-      const leftOuterEdge = childRelativeLeft - childRect.width;
-      const leftInnerEdge = childRelativeLeft;
-      const rightOuterEdge = childRelativeLeft + trackRect.width;
-      const rightInnerEdge = rightOuterEdge - childRect.width;
+      isDirectionNegative.current = !isLeft;
 
-      hideElement({
-        element: child,
-        start: isLeft ? leftOuterEdge : rightOuterEdge,
-        startVisible: isLeft ? leftInnerEdge : rightInnerEdge,
-        finish: isLeft ? rightOuterEdge : leftOuterEdge,
-        width: childRect.width,
-      });
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        const childRect = child.getBoundingClientRect();
+        const childRelativeLeft = trackRect.left - childRect.left;
+
+        const leftOuterEdge = childRelativeLeft - childRect.width;
+        const leftInnerEdge = childRelativeLeft;
+        const rightOuterEdge = childRelativeLeft + trackRect.width;
+        const rightInnerEdge = rightOuterEdge - childRect.width;
+
+        hideElement({
+          element: child,
+          start: isLeft ? leftOuterEdge : rightOuterEdge,
+          startVisible: isLeft ? leftInnerEdge : rightInnerEdge,
+          finish: isLeft ? rightOuterEdge : leftOuterEdge,
+          relevantSize: childRect.width,
+        });
+      }
+    } else if (typeProps.type == "vertical") {
+      const isUp = typeProps.direction && typeProps.direction === "Up";
+      isDirectionNegative.current = !isUp;
+
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+        const childRect = child.getBoundingClientRect();
+        const childRelativeTop = trackRect.top - childRect.top;
+
+        const topOuterEdge = childRelativeTop - childRect.height;
+        const topInnerEdge = childRelativeTop;
+        const bottomOuterEdge = childRelativeTop + trackRect.height;
+        const bottomInnerEdge = bottomOuterEdge - childRect.height;
+
+        hideElement({
+          element: child,
+          start: isUp ? bottomOuterEdge : topOuterEdge,
+          startVisible: isUp ? bottomInnerEdge : topInnerEdge,
+          finish: isUp ? topOuterEdge : bottomOuterEdge,
+          relevantSize: childRect.height,
+        });
+      }
     }
   });
 
   const hideElement = contextSafe((element: PrecalculatedElement) => {
+    const styleProp =
+      !typeProps.type || typeProps.type === "horizontal" ? "left" : "top";
+
     gsap.set(element.element, {
-      left: element.start,
+      [styleProp]: element.start,
     });
 
     visibleElementTimelines.current.dequeue();
@@ -93,28 +148,34 @@ export default function Track({
   const showElement = contextSafe((element: PrecalculatedElement) => {
     if (!trackRectRef.current) return;
 
-    const absoluteTravelDistancePercent =
-      (element.width + distanceBetweenElements) /
-      (trackRectRef.current.width + element.width);
-
     const timeline = gsap.timeline();
-
-    //Put this stuff into a different component? Its not really efficient
     visibleElementTimelines.current.enqueue(timeline);
 
+    const visible =
+      element.startVisible +
+      (isDirectionNegative.current
+        ? -distanceBetweenElements
+        : distanceBetweenElements);
+
+    const isHorizontal = !typeProps.type || typeProps.type == "horizontal";
+    const styleProp = isHorizontal ? "left" : "top";
+
+    const absoluteTravelDistancePercent =
+      (element.relevantSize + distanceBetweenElements) /
+      ((isHorizontal
+        ? trackRectRef.current.width
+        : trackRectRef.current.height) +
+        element.relevantSize);
+
     timeline.to(element.element, {
-      left:
-        element.startVisible +
-        (direction && direction == "Left"
-          ? distanceBetweenElements
-          : -distanceBetweenElements),
+      [styleProp]: visible,
       duration: totalDuration * absoluteTravelDistancePercent,
       ease: "none",
       onComplete: showNext,
     });
 
     timeline.to(element.element, {
-      left: element.finish,
+      [styleProp]: element.finish,
       duration: totalDuration * (1 - absoluteTravelDistancePercent),
       ease: "none",
       onComplete: () => {
@@ -123,15 +184,27 @@ export default function Track({
     });
   });
 
+  function pause() {
+    visibleElementTimelines.current.toArray().forEach((tl) => tl.pause());
+  }
+
+  function resume() {
+    visibleElementTimelines.current.toArray().forEach((tl) => tl.resume());
+  }
+
   return (
     <div
-      className="horizontal-track track"
+      className={`track ${
+        !typeProps.type || typeProps.type === "horizontal"
+          ? "horizontal-track"
+          : "vertical-track"
+      }`}
       ref={trackRef}
-      onMouseOver={() =>
-        visibleElementTimelines.current.toArray().forEach((tl) => tl.pause())
+      onMouseOver={
+        pauseStateToggleTriggers?.includes("Mouse over") ? pause : undefined
       }
-      onMouseLeave={() =>
-        visibleElementTimelines.current.toArray().forEach((tl) => tl.resume())
+      onMouseLeave={
+        pauseStateToggleTriggers?.includes("Mouse over") ? resume : undefined
       }
     >
       <div>{children}</div>

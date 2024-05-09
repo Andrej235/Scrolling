@@ -1,15 +1,17 @@
+import { useState } from "react";
 import "./App.scss";
 import Carousel from "./Components/Carousel/Carousel";
 import Icon from "./Components/Icon/Icon";
 import ImageWithText from "./Components/ImageWithText/ImageWithText";
 import Navigation from "./Components/Navigation/Navigation";
 import Track from "./Components/Track/Track";
-import VerticalTrack from "./Components/Track/VerticalTrack";
 import useJumpyText from "./Hooks/UseJumpyText";
 import useScrambledText from "./Hooks/UseScrambledText";
 import useTextAnimations from "./Hooks/UseTextAnimations";
 
 function App() {
+  const [isTrackPaused, setIsTrackPaused] = useState(false);
+
   useJumpyText("#jumpy");
   useScrambledText("#scrambled-text");
 
@@ -46,13 +48,15 @@ function App() {
           left: "100%",
           transform: "translateX(-100%)",
           width: "3rem",
-          height: "100vh",
+          height: "70vh",
         }}
+        onClick={() => setIsTrackPaused(!isTrackPaused)}
       >
-        <VerticalTrack
+        <Track
           distanceBetweenElements={35}
-          totalDuration={2}
-          direction="Up"
+          totalDuration={1}
+          type="vertical"
+          isPaused={isTrackPaused}
         >
           <Icon className="icon-bottom-track" name="link" />
           <Icon className="icon-bottom-track" name="thumbs-up" />
@@ -78,18 +82,36 @@ function App() {
           <Icon className="icon-bottom-track" name="asl-interpreting" />
           <Icon className="icon-bottom-track" name="krw" />
           <Icon className="icon-bottom-track" name="google-plus-square" />
-        </VerticalTrack>
+        </Track>
+      </div>
 
-        <VerticalTrack distanceBetweenElements={35} totalDuration={2}>
-          <p>1</p>
-          <p>2</p>
-          <p>3</p>
-          <p>4</p>
-          <p>5</p>
-          <p>6</p>
-          <p>7</p>
-          <p>8</p>
-          <p>9</p>
+      <div
+        id="vertical-track-testing-container-2"
+        style={{
+          position: "absolute",
+          top: "100vh",
+          left: "100%",
+          transform: "translateX(-100%)",
+          width: "3rem",
+          height: "100vh",
+        }}
+      >
+        <Track
+          distanceBetweenElements={35}
+          totalDuration={2}
+          type="vertical"
+          direction="Up"
+          pauseStateToggleTriggers={["Mouse over"]}
+        >
+          <p>01</p>
+          <p>02</p>
+          <p>03</p>
+          <p>04</p>
+          <p>05</p>
+          <p>06</p>
+          <p>07</p>
+          <p>08</p>
+          <p>09</p>
           <p>10</p>
           <p>11</p>
           <p>12</p>
@@ -101,7 +123,12 @@ function App() {
           <p>18</p>
           <p>19</p>
           <p>20</p>
-        </VerticalTrack>
+          <p>21</p>
+          <p>22</p>
+          <p>23</p>
+          <p>24</p>
+          <p>25</p>
+        </Track>
       </div>
 
       <div
@@ -126,6 +153,7 @@ function App() {
             distanceBetweenElements={175}
             totalDuration={1}
             direction="Left"
+            pauseStateToggleTriggers={["Mouse over"]}
           >
             <p>First paragraph</p>
             <p>Second paragraph</p>
@@ -145,7 +173,11 @@ function App() {
             padding: "1rem 0",
           }}
         >
-          <Track distanceBetweenElements={125} totalDuration={2}>
+          <Track
+            distanceBetweenElements={125}
+            totalDuration={2}
+            pauseStateToggleTriggers={["Mouse over"]}
+          >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
             <Icon className="icon-bottom-track" name="arrow-circle-left" />
@@ -162,7 +194,11 @@ function App() {
 
           <br />
 
-          <Track distanceBetweenElements={75} totalDuration={2.5}>
+          <Track
+            distanceBetweenElements={75}
+            totalDuration={2.5}
+            pauseStateToggleTriggers={["Mouse over"]}
+          >
             <p>First paragraph</p>
             <p>Second paragraph</p>
             <p>Third paragraph</p>
@@ -172,7 +208,11 @@ function App() {
 
           <br />
 
-          <Track distanceBetweenElements={200} totalDuration={3}>
+          <Track
+            distanceBetweenElements={200}
+            totalDuration={3}
+            pauseStateToggleTriggers={["Mouse over"]}
+          >
             <Icon className="icon-bottom-track" name="address-card" />
             <Icon className="icon-bottom-track" name="apple" />
             <Icon className="icon-bottom-track" name="arrows-alt" />
@@ -202,6 +242,7 @@ function App() {
             distanceBetweenElements={75}
             totalDuration={0.5}
             direction="Left"
+            pauseStateToggleTriggers={["Mouse over"]}
           >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
@@ -223,6 +264,7 @@ function App() {
             distanceBetweenElements={75}
             totalDuration={2.5}
             direction="Left"
+            pauseStateToggleTriggers={["Mouse over"]}
           >
             <p>First paragraph</p>
             <p>Second paragraph</p>
@@ -237,6 +279,7 @@ function App() {
             distanceBetweenElements={75}
             totalDuration={0.5}
             direction="Left"
+            pauseStateToggleTriggers={["Mouse over"]}
           >
             <Icon className="icon-bottom-track" name="address-card" />
             <Icon className="icon-bottom-track" name="apple" />
@@ -263,7 +306,11 @@ function App() {
             padding: "1rem 0",
           }}
         >
-          <Track distanceBetweenElements={75} totalDuration={2.5}>
+          <Track
+            distanceBetweenElements={75}
+            totalDuration={2.5}
+            pauseStateToggleTriggers={["Mouse over"]}
+          >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
             <Icon className="icon-bottom-track" name="arrow-circle-left" />
@@ -386,7 +433,11 @@ function App() {
             padding: "1rem 0",
           }}
         >
-          <Track distanceBetweenElements={5} totalDuration={0.15}>
+          <Track
+            distanceBetweenElements={5}
+            totalDuration={0.15}
+            pauseStateToggleTriggers={["Mouse over"]}
+          >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
             <Icon className="icon-bottom-track" name="arrow-circle-left" />
@@ -439,6 +490,7 @@ function App() {
           relative values!
         </p>
       </div>
+
       <Carousel
         flyIn={true}
         animationProps={{
@@ -451,11 +503,13 @@ function App() {
         <p>Second paragraph</p>
         <p>Third paragraph</p>
       </Carousel>
+
       <Carousel flyIn={{ from: "left", to: "right", offset: 100 }}>
         <p>First paragraph</p>
         <p>Second paragraph</p>
         <p>Third paragraph</p>
       </Carousel>
+
       <Carousel
         flyIn={{ from: "right", to: "left", inOffset: 200, outOffset: 300 }}
         animationProps={{
@@ -468,6 +522,7 @@ function App() {
         <p>Second paragraph</p>
         <p>Third paragraph</p>
       </Carousel>
+
       <ImageWithText
         direction="Normal"
         wrap="Reverse"
