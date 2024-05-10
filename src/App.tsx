@@ -101,7 +101,6 @@ function App() {
           totalDuration={2}
           type="vertical"
           direction="Up"
-          pauseStateToggleTriggers={["Mouse over"]}
         >
           <p>01</p>
           <p>02</p>
@@ -153,7 +152,7 @@ function App() {
             distanceBetweenElements={175}
             totalDuration={1}
             direction="Left"
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <p>First paragraph</p>
             <p>Second paragraph</p>
@@ -176,7 +175,7 @@ function App() {
           <Track
             distanceBetweenElements={125}
             totalDuration={2}
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
@@ -197,7 +196,7 @@ function App() {
           <Track
             distanceBetweenElements={75}
             totalDuration={2.5}
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <p>First paragraph</p>
             <p>Second paragraph</p>
@@ -211,7 +210,7 @@ function App() {
           <Track
             distanceBetweenElements={200}
             totalDuration={3}
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <Icon className="icon-bottom-track" name="address-card" />
             <Icon className="icon-bottom-track" name="apple" />
@@ -242,7 +241,7 @@ function App() {
             distanceBetweenElements={75}
             totalDuration={0.5}
             direction="Left"
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
@@ -264,7 +263,7 @@ function App() {
             distanceBetweenElements={75}
             totalDuration={2.5}
             direction="Left"
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <p>First paragraph</p>
             <p>Second paragraph</p>
@@ -279,7 +278,7 @@ function App() {
             distanceBetweenElements={75}
             totalDuration={0.5}
             direction="Left"
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <Icon className="icon-bottom-track" name="address-card" />
             <Icon className="icon-bottom-track" name="apple" />
@@ -309,7 +308,7 @@ function App() {
           <Track
             distanceBetweenElements={75}
             totalDuration={2.5}
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />
@@ -436,7 +435,7 @@ function App() {
           <Track
             distanceBetweenElements={5}
             totalDuration={0.15}
-            pauseStateToggleTriggers={["Mouse over"]}
+            pauseStateMouseHoverTriggers={true}
           >
             <Icon className="icon-bottom-track" name="link" />
             <Icon className="icon-bottom-track" name="thumbs-up" />

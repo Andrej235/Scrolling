@@ -3,13 +3,16 @@ import gsap from "gsap";
 import "./Track.scss";
 import { useGSAP } from "@gsap/react";
 import { Queue } from "../../Types/Queue";
+import ScrollTrigger from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 interface UniversalTrackProps {
   children: JSX.Element[] | JSX.Element;
   distanceBetweenElements: number;
   totalDuration: number;
   isPaused?: boolean;
-  pauseStateToggleTriggers?: ("Mouse over" | "Scroll /// Not implemented")[];
+  scrollOptimized?: boolean;
+  pauseStateMouseHoverTriggers?: boolean;
 }
 
 type TrackProps = UniversalTrackProps &
@@ -41,9 +44,27 @@ export default function Track({
   distanceBetweenElements,
   totalDuration,
   isPaused,
-  pauseStateToggleTriggers,
+  pauseStateMouseHoverTriggers: pauseStateMouseTriggers,
+  scrollOptimized,
   ...typeProps
 }: TrackProps) {
+  useEffect(() => {
+    if (scrollOptimized === undefined || scrollOptimized === true) {
+      const scrollTrigger = ScrollTrigger.create({
+        trigger: trackRef.current,
+        start: "top 100%",
+        end: "bottom 0%",
+        scrub: false,
+        onEnter: resume,
+        onLeave: pause,
+        onEnterBack: resume,
+        onLeaveBack: pause,
+      });
+
+      return () => scrollTrigger.kill();
+    }
+  }, [scrollOptimized]);
+
   useEffect(() => {
     if (isPaused) pause();
     else resume();
@@ -200,12 +221,8 @@ export default function Track({
           : "vertical-track"
       }`}
       ref={trackRef}
-      onMouseOver={
-        pauseStateToggleTriggers?.includes("Mouse over") ? pause : undefined
-      }
-      onMouseLeave={
-        pauseStateToggleTriggers?.includes("Mouse over") ? resume : undefined
-      }
+      onMouseOver={pauseStateMouseTriggers ? pause : undefined}
+      onMouseLeave={pauseStateMouseTriggers ? resume : undefined}
     >
       <div>{children}</div>
     </div>
