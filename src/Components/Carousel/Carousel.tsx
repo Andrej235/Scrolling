@@ -1,6 +1,7 @@
 import { useGSAP } from "@gsap/react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import "./Carousel.scss";
 
 interface AnimationProps {
   inDuration: number;
@@ -15,6 +16,7 @@ type ExclusiveOffset<T extends "single" | "separate"> = T extends "single"
 interface CarouselProps {
   children: JSX.Element[];
   animationProps?: Partial<AnimationProps>;
+  showIndicators?: boolean;
   flyIn?:
     | ({
         from?: "left" | "right" | "top" | "bottom";
@@ -27,15 +29,23 @@ export default function Carousel({
   children,
   flyIn,
   animationProps,
+  showIndicators,
 }: CarouselProps) {
   const [currentChild, setCurrentChild] = useState<number>(0);
   const currentChildRef = useRef<HTMLDivElement>(null);
+  const currentChildTimeline = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    setCurrentChild(0);
-  }, children);
+    if (!currentChildRef.current) return;
 
-  useGSAP(() => {
+    initialize();
+    return () => {
+      currentChildTimeline.current?.kill();
+    };
+  }, [currentChild]);
+
+  const { contextSafe } = useGSAP();
+  const initialize = contextSafe(() => {
     if (!flyIn) return;
 
     const offset =
@@ -55,6 +65,7 @@ export default function Carousel({
           } as const);
 
     const tl = gsap.timeline();
+    currentChildTimeline.current = tl;
     const from: {} = getDirectionalOffset(
       flyIn === true ? "top" : flyIn.from ?? "top",
       offset.in
@@ -95,7 +106,7 @@ export default function Carousel({
       },
       `+=${animationProps?.visibleDuration ?? 3}`
     );
-  }, [currentChild]);
+  });
 
   function getDirectionalOffset(
     direction: "left" | "right" | "top" | "bottom",
@@ -124,5 +135,28 @@ export default function Carousel({
     }
   }
 
-  return <div ref={currentChildRef}>{children[currentChild]}</div>;
+  function showCircles() {
+    if (!showIndicators) return <></>;
+
+    const circles: React.JSX.Element[] = [];
+
+    for (let i = 0; i < children.length; i++) {
+      circles.push(
+        <div
+          key={i}
+          className={`indicator ${currentChild === i ? "active" : ""}`}
+        ></div>
+      );
+    }
+
+    return circles;
+  }
+
+  return (
+    <div className="carousel">
+      <div ref={currentChildRef}>{children[currentChild]}</div>
+
+      <div className="indicator-container">{showCircles()}</div>
+    </div>
+  );
 }

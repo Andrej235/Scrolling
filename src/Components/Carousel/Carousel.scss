@@ -1,0 +1,23 @@
+.carousel {
+  width: max-content;
+  height: max-content;
+}
+
+.indicator-container {
+  display: flex;
+
+  .indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: #999;
+    margin: 0.5rem;
+
+    transition: 100ms;
+
+    &.active {
+      background-color: #fff;
+      scale: 1.5;
+    }
+  }
+}

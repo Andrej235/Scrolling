@@ -38,6 +38,20 @@ function App() {
           than one thing. But what if we need more control over the order and
           timing of those animations?
         </p>
+
+        <Carousel
+          flyIn={{ from: "right", to: "left", inOffset: 200, outOffset: 300 }}
+          showIndicators
+          animationProps={{
+            inDuration: 0.5,
+            outDuration: 0.5,
+            visibleDuration: 1,
+          }}
+        >
+          <p>First paragraph</p>
+          <p>Second paragraph</p>
+          <p>Third paragraph</p>
+        </Carousel>
       </div>
 
       <div
