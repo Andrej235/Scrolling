@@ -8,6 +8,7 @@ import Track from "./Components/Track/Track";
 import useJumpyText from "./Hooks/UseJumpyText";
 import useScrambledText from "./Hooks/UseScrambledText";
 import useTextAnimations from "./Hooks/UseTextAnimations";
+import ImageCarousel from "./Components/ImageCarousel/ImageCarousel";
 
 function App() {
   const [isTrackPaused, setIsTrackPaused] = useState(false);
@@ -52,6 +53,16 @@ function App() {
           <p>Second paragraph</p>
           <p>Third paragraph</p>
         </Carousel>
+
+        <ImageCarousel
+          images={[
+            "img/1.jpg",
+            "img/2.jpg",
+            "img/3.jpg",
+            "img/4.jpg",
+            "img/5.jpg",
+          ]}
+        />
       </div>
 
       <div

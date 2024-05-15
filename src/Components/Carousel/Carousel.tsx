@@ -1,7 +1,9 @@
 import { useGSAP } from "@gsap/react";
 import React, { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
 import "./Carousel.scss";
+import gsap from "gsap";
+import Observer from "gsap/Observer";
+gsap.registerPlugin(Observer);
 
 interface AnimationProps {
   inDuration: number;
@@ -34,6 +36,28 @@ export default function Carousel({
   const [currentChild, setCurrentChild] = useState<number>(0);
   const currentChildRef = useRef<HTMLDivElement>(null);
   const currentChildTimeline = useRef<gsap.core.Timeline | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = Observer.create({
+      type: "touch,pointer",
+      target: containerRef.current,
+      onLeft: () => {
+        const nextChild =
+          currentChild === 0 ? children.length - 1 : currentChild - 1;
+        setCurrentChild(nextChild);
+      },
+      onRight: () => {
+        const nextChild =
+          currentChild === children.length - 1 ? 0 : currentChild + 1;
+        setCurrentChild(nextChild);
+      },
+    });
+
+    return () => observer.kill();
+  }, [containerRef.current, currentChild]);
 
   useEffect(() => {
     if (!currentChildRef.current) return;
@@ -153,7 +177,7 @@ export default function Carousel({
   }
 
   return (
-    <div className="carousel">
+    <div className="carousel" ref={containerRef}>
       <div ref={currentChildRef}>{children[currentChild]}</div>
 
       <div className="indicator-container">{showCircles()}</div>
