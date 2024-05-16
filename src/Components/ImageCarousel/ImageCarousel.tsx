@@ -14,14 +14,6 @@ export default function ImageCarousel({ images }: ImageCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const previousStateRef = useRef<Flip.FlipState | null>(null);
 
-  function getPreviousImageIdx() {
-    return currentImage - 1 < 0 ? images.length - 1 : currentImage - 1;
-  }
-
-  function getNextImageIdx() {
-    return currentImage + 1 > images.length - 1 ? 0 : currentImage + 1;
-  }
-
   const [orderedImages, setOrderedImages] = useState<string[]>([]);
 
   useEffect(() => setCurrentImage(0), [images]);
@@ -30,9 +22,9 @@ export default function ImageCarousel({ images }: ImageCarouselProps) {
     if (!containerRef.current) return;
 
     previousStateRef.current = Flip.getState(containerRef.current.children);
-
-    setOrderedImages(centerArrayAroundElement(images, currentImage));
-    console.log(orderedImages);
+    setOrderedImages(
+      centerArrayAroundElement(images, images.indexOf(images[currentImage]))
+    );
 
     animateFrom();
   }, [currentImage, containerRef.current]);
@@ -49,7 +41,7 @@ export default function ImageCarousel({ images }: ImageCarouselProps) {
   });
 
   const moveToNextImage = contextSafe(() => {
-    setCurrentImage(getNextImageIdx());
+    setCurrentImage((currentImage + 1) % images.length);
   });
 
   return (
@@ -70,20 +62,42 @@ export default function ImageCarousel({ images }: ImageCarouselProps) {
   );
 }
 
-function centerArrayAroundElement<T>(arr: T[], idx: number): T[] {
+function centerArrayAroundElement<T>(arrToCenter: T[], idx: number): T[] {
+  const arr = arrToCenter.slice();
   const half = Math.floor(arr.length / 2);
 
-  
+  // if (idx === half) return arr;
+  //1 2 3 4 /5\ 6 7 *8* 9
 
-/*   if (idx === half + 1) return arr;
+  let k = half - idx + (half < idx ? arr.length : 0);
+  const n = arr.length;
+  /* 
+  for (let i = 0; i < k; i++) {
+    let t = arr[n - 1];
+    for (let j = 0; j < n; j++) {
+      const t1 = arr[j];
+      arr[j] = t;
+      t = t1;
+    }
+  } */
 
-  if (idx > half + 1) {
-    const leftPart = arr.slice(idx - half, idx);
-    const rightPart = [...arr.slice(idx + 1), ...arr.slice(0, idx - half)];
-    return [...leftPart, arr[idx], ...rightPart];
+  let safety = 0;
+  let currentIdx = 0;
+  let prev = arr[0];
+
+  for (let i = 0; i < arr.length; i++) {
+    currentIdx = (currentIdx + k) % n;
+    const t = arr[currentIdx];
+    arr[currentIdx] = prev;
+    prev = t;
+
+    if (currentIdx === safety) {
+      currentIdx++;
+      safety++;
+      prev = arr[currentIdx];
+    }
   }
+  console.log(arr);
 
-  const leftPart = [...arr.slice(idx + half + 1), ...arr.slice(0, idx)];
-  const rightPart = arr.slice(idx + 1, idx + half + 1);
-  return [...leftPart, arr[idx], ...rightPart]; */
+  return arr;
 }
